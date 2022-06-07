@@ -1,13 +1,11 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
-from flask import Flask, request
-
-import responses
-from responses import responses
+from flask import Flask, request, abort
+import json
 # Flask constructor takes the name of
 # current module (__name__) as argument.
 app = Flask(__name__)
-
+responses = json.load(open("./data/responses.json"))
 # The route() function of the Flask class is a decorator,
 # which tells the application which URL should call
 # the associated function.
@@ -18,7 +16,11 @@ def search():
     print("NAME: ", name, flush=True)
     args = name.split("=")
     model_name = args[1].strip("'")
-    return responses[model_name]
+    if model_name in responses:
+        return responses[model_name]
+    else:
+        abort(404, "Resource not found")
+
 
 # main driver function
 if __name__ == '__main__':
